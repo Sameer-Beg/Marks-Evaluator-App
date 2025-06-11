@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Marks Checker</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .container {
+      background: #ffffff;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      width: 400px;
+      text-align: center;
+      transform: perspective(1000px) rotateX(5deg);
+      margin-bottom: 30px;
+      animation: pop-in 0.6s ease;
+    }
+
+    @keyframes pop-in {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input[type="number"] {
+      width: 80%;
+      padding: 10px;
+      margin: 20px 0;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 25px;
+      background: #0099ff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      background: #007acc;
+      transform: scale(1.05);
+    }
+
+    .output {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #2c3e50;
+      transition: all 0.3s ease;
+    }
+
+    table {
+      width: 80%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      animation: slide-in 0.5s ease;
+    }
+
+    @keyframes slide-in {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #0099ff;
+      color: white;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .history-container {
+      width: 80%;
+      max-width: 800px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Student Marks Checker</h1>
+    <input type="number" id="marks" placeholder="Enter marks out of 100">
+    <br>
+    <button onclick="checkMarks()">Check</button>
+    <div class="output" id="result"></div>
+  </div>
+
+  <div class="history-container">
+    <h2>Result History</h2>
+    <table id="historyTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Marks</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Sound Effects (free use sounds from Pixabay) -->
+  <audio id="successSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_bda0991ab6.mp3" type="audio/mp3">
+  </audio>
+
+  <audio id="errorSound" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2022/02/23/audio_6617b3e0f6.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    let count = 0;
+
+    function checkMarks() {
+      const marksInput = document.getElementById('marks');
+      const marks = parseInt(marksInput.value);
+      const result = document.getElementById('result');
+      const table = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+      const successSound = document.getElementById('successSound');
+      const errorSound = document.getElementById('errorSound');
+
+      let message = "";
+
+      if (isNaN(marks)) {
+        message = "Please enter a valid number!";
+        result.textContent = message;
+        errorSound.play().catch(e => console.log("Sound error:", e));
+        return;
+      } else if (marks >= 90 && marks <= 100) {
+        message = "This is Good";
+        successSound.play().catch(e => console.log("Sound error:", e));
+      } else if (marks >= 60 && marks <= 89) {
+        message = "This is also Good";
+        successSound.play().catch(e => console.log("Sound error:", e));
+      } else if (marks >= 0 && marks < 60) {
+        message = "This is Good as well\nBecause marks don’t matter but our effort does.";
+        successSound.play().catch(e => console.log("Sound error:", e));
+      } else {
+        message = "Invalid marks! Please enter marks between 0 and 100.";
+        result.textContent = message;
+        errorSound.play().catch(e => console.log("Sound error:", e));
+        return;
+      }
+
+      result.innerHTML = message.replace(/\n/g, '<br>');
+
+      // Add to history table
+      count++;
+      const row = table.insertRow();
+      row.insertCell(0).textContent = count;
+      row.insertCell(1).textContent = marks;
+      row.insertCell(2).textContent = message.split('\n')[0];
+
+      marksInput.value = "";
+    }
+  </script>
+</body>
+</html>
